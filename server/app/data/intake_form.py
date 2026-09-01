@@ -1,6 +1,6 @@
 INTAKE_FORM_DEFINITION = {
     "form": "Hair & Scalp Intake",
-    "version": 4,
+    "version": 5,
     "sections": [
         {
             "id": "A",
@@ -53,14 +53,44 @@ INTAKE_FORM_DEFINITION = {
                     "key": "pattern",
                     "type": "multi",
                     "question": "Which pattern feels closest to what you are noticing?",
-                    "helper": "Select all that apply. It is okay to make your best guess.",
+                    "helper": "Select all that apply. Your doctor will confirm this — it is not a diagnosis.",
                     "options": [
-                        "Receding hairline",
-                        "Thinning at crown",
-                        "Widening part line",
-                        "Diffuse thinning",
-                        "Patchy loss",
-                        "Sudden excessive shedding",
+                        {
+                            "label": "Receding hairline",
+                            "value": "Receding hairline",
+                            "description": "Moving back around the temples",
+                            "image": "/intake-assets/receding-hairline.svg",
+                        },
+                        {
+                            "label": "Thinning at crown",
+                            "value": "Thinning at crown",
+                            "description": "More scalp visible near the crown",
+                            "image": "/intake-assets/thinning-crown.svg",
+                        },
+                        {
+                            "label": "Widening part line",
+                            "value": "Widening part line",
+                            "description": "The centre or side part looks wider",
+                            "image": "/intake-assets/widening-part.svg",
+                        },
+                        {
+                            "label": "Diffuse thinning",
+                            "value": "Diffuse thinning",
+                            "description": "Less density across most of the scalp",
+                            "image": "/intake-assets/diffuse-thinning.svg",
+                        },
+                        {
+                            "label": "Patchy loss",
+                            "value": "Patchy loss",
+                            "description": "One or more defined bare patches",
+                            "image": "/intake-assets/patchy-loss.svg",
+                        },
+                        {
+                            "label": "Sudden excessive shedding",
+                            "value": "Sudden excessive shedding",
+                            "description": "Much more hair falling than usual",
+                            "image": "/intake-assets/excessive-shedding.svg",
+                        },
                     ],
                     "allow_other": True,
                     "other_label": "Other",

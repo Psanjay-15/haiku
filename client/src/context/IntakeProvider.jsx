@@ -10,6 +10,7 @@ const initialState = {
   hasStarted: false,
   currentQuestion: 0,
   answers: {},
+  patientSex: "",
 };
 
 function loadSavedIntake() {
@@ -73,6 +74,10 @@ function IntakeProvider({ children }) {
     }));
   }
 
+  function savePatientSex(value) {
+    setIntake((current) => ({ ...current, patientSex: value }));
+  }
+
   function goToNextQuestion() {
     setIntake((current) => ({
       ...current,
@@ -109,6 +114,7 @@ function IntakeProvider({ children }) {
     startIntake,
     returnToWelcome,
     saveAnswer,
+    savePatientSex,
     goToNextQuestion,
     goToPreviousQuestion,
     goToQuestion,

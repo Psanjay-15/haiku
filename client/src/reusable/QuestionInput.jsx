@@ -42,7 +42,7 @@ const OptionGrid = styled.div`
   gap: 10px;
 
   @media (min-width: 640px) {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(${({ $pattern }) => $pattern ? 3 : 2}, minmax(0, 1fr));
   }
 `;
 
@@ -91,6 +91,49 @@ const Option = styled.button`
   }
 `;
 
+const PatternOption = styled(Option)`
+  position: relative;
+  min-height: 154px;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+  padding: 0;
+  overflow: hidden;
+
+  &::before {
+    position: absolute;
+    z-index: 1;
+    top: 12px;
+    right: 12px;
+  }
+`;
+
+const PatternImage = styled.img`
+  width: 100%;
+  height: 94px;
+  object-fit: contain;
+  padding: 7px 26px 0;
+  background: #f3eee7;
+`;
+
+const PatternCopy = styled.span`
+  display: grid;
+  gap: 4px;
+  padding: 9px 38px 11px 12px;
+
+  strong {
+    font-size: 0.8rem;
+    line-height: 1.25;
+  }
+
+  small {
+    color: var(--color-muted);
+    font-size: 0.68rem;
+    font-weight: 500;
+    line-height: 1.4;
+  }
+`;
+
 const OtherField = styled.label`
   display: block;
   margin-top: 12px;
@@ -122,6 +165,15 @@ const OtherField = styled.label`
 
 const OTHER_PREFIX = "Other: ";
 
+const PATTERN_DETAILS = {
+  "Receding hairline": ["Moving back around the temples", "/intake-assets/receding-hairline.svg"],
+  "Thinning at crown": ["More scalp visible near the crown", "/intake-assets/thinning-crown.svg"],
+  "Widening part line": ["The centre or side part looks wider", "/intake-assets/widening-part.svg"],
+  "Diffuse thinning": ["Less density across most of the scalp", "/intake-assets/diffuse-thinning.svg"],
+  "Patchy loss": ["One or more defined bare patches", "/intake-assets/patchy-loss.svg"],
+  "Sudden excessive shedding": ["Much more hair falling than usual", "/intake-assets/excessive-shedding.svg"],
+};
+
 
 function QuestionInput({ question, value, onChange }) {
   if (question.type === "number") {
@@ -147,9 +199,15 @@ function QuestionInput({ question, value, onChange }) {
   }
 
   const isMulti = question.type === "multi" || question.type === "multi_optional";
-  const options = question.options.map((option) =>
-    typeof option === "string" ? { label: option, value: option } : option,
-  );
+  const isPatternQuestion = question.key === "pattern";
+  const options = question.options.map((option) => {
+    const normalized = typeof option === "string" ? { label: option, value: option } : option;
+    const fallback = PATTERN_DETAILS[normalized.value];
+
+    return fallback
+      ? { description: fallback[0], image: fallback[1], ...normalized }
+      : normalized;
+  });
   const selectedValues = isMulti
     ? value || []
     : value === undefined
@@ -205,9 +263,12 @@ function QuestionInput({ question, value, onChange }) {
 
   return (
     <div>
-      <OptionGrid>
-        {options.map((option) => (
-          <Option
+      <OptionGrid $pattern={isPatternQuestion}>
+        {options.map((option) => {
+          const OptionComponent = isPatternQuestion ? PatternOption : Option;
+
+          return (
+          <OptionComponent
             key={String(option.value)}
             type="button"
             $selected={selectedValues.includes(option.value)}
@@ -215,9 +276,18 @@ function QuestionInput({ question, value, onChange }) {
             aria-pressed={selectedValues.includes(option.value)}
             onClick={() => selectOption(option.value)}
           >
-            {option.label}
-          </Option>
-        ))}
+            {isPatternQuestion ? (
+              <>
+                <PatternImage src={option.image} alt="" aria-hidden="true" />
+                <PatternCopy>
+                  <strong>{option.label}</strong>
+                  <small>{option.description}</small>
+                </PatternCopy>
+              </>
+            ) : option.label}
+          </OptionComponent>
+          );
+        })}
         {question.allow_other && (
           <Option
             type="button"

@@ -6,6 +6,7 @@ import AppShell from "../reusable/AppShell";
 import HabitsInput from "../reusable/HabitsInput";
 import PrimaryButton from "../reusable/PrimaryButton";
 import QuestionInput from "../reusable/QuestionInput";
+import SectionAInput from "../reusable/SectionAInput";
 import TreatmentInput from "../reusable/TreatmentInput";
 import YesNoDetailInput from "../reusable/YesNoDetailInput";
 import ReviewPage from "./ReviewPage";
@@ -17,13 +18,14 @@ const Workspace = styled.section`
   gap: 28px;
 
   @media (min-width: 900px) {
-    grid-template-columns: 270px minmax(0, 740px);
+    grid-template-columns: ${({ $sectionA }) => $sectionA ? "minmax(0, 1120px)" : "270px minmax(0, 740px)"};
     justify-content: center;
     gap: 44px;
   }
 `;
 
 const Sidebar = styled.aside`
+  display: ${({ $hidden }) => $hidden ? "none" : "block"};
   border: 1px solid var(--color-border);
   border-radius: 22px;
   padding: 22px;
@@ -99,7 +101,7 @@ const SectionLetter = styled.span`
 const QuestionCard = styled.div`
   border: 1px solid var(--color-border);
   border-radius: 26px;
-  padding: clamp(24px, 5vw, 48px);
+  padding: ${({ $compact }) => $compact ? "clamp(22px, 3vw, 36px)" : "clamp(24px, 5vw, 48px)"};
   background: var(--color-surface);
   box-shadow: 0 24px 70px rgb(38 45 41 / 9%);
 `;
@@ -246,8 +248,10 @@ function IntakePage() {
     completeIntake,
     currentQuestion,
     form,
+    patientSex,
     returnToWelcome,
     saveAnswer,
+    savePatientSex,
     goToNextQuestion,
     goToPreviousQuestion,
     goToQuestion,
@@ -262,6 +266,9 @@ function IntakePage() {
     })),
   );
   const question = questions[currentQuestion];
+  const sectionA = form.sections[0];
+  const sectionAQuestions = questions.filter((item) => item.section_id === "A");
+  const isSectionAPage = currentQuestion < sectionAQuestions.length;
   const reviewMode = !question;
   const completedQuestions = Math.min(currentQuestion, questions.length);
   const progress = Math.max(2, (completedQuestions / questions.length) * 100);
@@ -270,8 +277,13 @@ function IntakePage() {
     : form.sections.length - 1;
 
   function handleBack() {
-    if (currentQuestion === 0) {
+    if (isSectionAPage) {
       returnToWelcome();
+      return;
+    }
+
+    if (currentQuestion === sectionAQuestions.length) {
+      goToQuestion(0);
       return;
     }
 
@@ -279,6 +291,16 @@ function IntakePage() {
   }
 
   function handleContinue() {
+    if (isSectionAPage) {
+      if (editingQuestionIndex !== null) {
+        setEditingQuestionIndex(null);
+        goToQuestion(questions.length);
+      } else {
+        goToQuestion(sectionAQuestions.length);
+      }
+      return;
+    }
+
     if (question.type === "multi_optional" && !answers[question.key]) {
       saveAnswer(question.key, []);
     }
@@ -298,7 +320,7 @@ function IntakePage() {
     );
 
     setEditingQuestionIndex(questionIndex);
-    goToQuestion(questionIndex);
+    goToQuestion(questionIndex < sectionAQuestions.length ? 0 : questionIndex);
   }
 
   function handleReviewBack() {
@@ -348,10 +370,16 @@ function IntakePage() {
     );
   }
 
+  const isSectionAComplete =
+    ["Male", "Female", "Rather not say"].includes(patientSex) &&
+    sectionAQuestions.every((item) =>
+      isAnswerComplete(item, answers[item.key], answers),
+    );
+
   return (
     <AppShell>
-      <Workspace>
-        <Sidebar>
+      <Workspace $sectionA={isSectionAPage}>
+        <Sidebar $hidden={isSectionAPage}>
           <ProgressTop>
             <span>Your progress</span>
             <span>{completedQuestions} of {questions.length}</span>
@@ -371,7 +399,7 @@ function IntakePage() {
           </SectionList>
         </Sidebar>
 
-        <QuestionCard aria-live="polite">
+        <QuestionCard $compact={isSectionAPage} aria-live="polite">
           {!reviewMode && (
             <BackButton type="button" onClick={handleBack}>
               <span aria-hidden="true">←</span> Back
@@ -388,24 +416,37 @@ function IntakePage() {
             />
           ) : (
             <>
-              <QuestionNumber>
-                Question {question.number} of {questions.length} · {question.section_title}
-              </QuestionNumber>
-              <Title>{question.question}</Title>
-              <SupportingText>{question.helper}</SupportingText>
-
-              {renderQuestionInput()}
+              {isSectionAPage ? (
+                <SectionAInput
+                  section={sectionA}
+                  answers={answers}
+                  patientSex={patientSex}
+                  onAnswer={saveAnswer}
+                  onSexChange={savePatientSex}
+                />
+              ) : (
+                <>
+                  <QuestionNumber>
+                    Question {question.number} of {questions.length} · {question.section_title}
+                  </QuestionNumber>
+                  <Title>{question.question}</Title>
+                  <SupportingText>{question.helper}</SupportingText>
+                  {renderQuestionInput()}
+                </>
+              )}
 
               <Actions>
                 <SavedNote>Saved automatically on this device</SavedNote>
                 <PrimaryButton
                   type="button"
                   disabled={
-                    !isAnswerComplete(question, answers[question.key], answers)
+                    isSectionAPage
+                      ? !isSectionAComplete
+                      : !isAnswerComplete(question, answers[question.key], answers)
                   }
                   onClick={handleContinue}
                 >
-                  Continue <span aria-hidden="true">→</span>
+                  {isSectionAPage ? "Continue to health" : "Continue"} <span aria-hidden="true">→</span>
                 </PrimaryButton>
               </Actions>
             </>
