@@ -1,12 +1,22 @@
+from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException, status
 from sqlalchemy.exc import SQLAlchemyError
+from app.core.database import Base, check_database_connection, engine
+from app.models.intake import Intake  
 
-from app.core.database import check_database_connection
+
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    Base.metadata.create_all(bind=engine)
+    yield
+
 
 app = FastAPI(
     title="Haiku",
     version="0.1.0",
+    lifespan=lifespan,
 )
+
 
 @app.get("/")
 def read_root():
