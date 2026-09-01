@@ -3,13 +3,14 @@ import styled from "styled-components";
 
 const HabitList = styled.div`
   display: grid;
-  gap: 12px;
+  gap: 10px;
+  @media (min-width: 760px) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 `;
 
 const HabitCard = styled.div`
   border: 1px solid var(--color-border);
   border-radius: 16px;
-  padding: 16px;
+  padding: 13px;
   background: #fff;
 `;
 

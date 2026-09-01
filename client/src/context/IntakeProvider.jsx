@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { getIntakeForm } from "../services";
 import IntakeContext from "./IntakeContext";
@@ -10,6 +10,7 @@ const initialState = {
   hasStarted: false,
   currentQuestion: 0,
   answers: {},
+  patientSex: "",
 };
 
 function loadSavedIntake() {
@@ -66,12 +67,16 @@ function IntakeProvider({ children }) {
     setIntake((current) => ({ ...current, hasStarted: false }));
   }
 
-  function saveAnswer(key, value) {
+  const saveAnswer = useCallback(function saveAnswer(key, value) {
     setIntake((current) => ({
       ...current,
       answers: { ...current.answers, [key]: value },
     }));
-  }
+  }, []);
+
+  const savePatientSex = useCallback(function savePatientSex(value) {
+    setIntake((current) => ({ ...current, patientSex: value }));
+  }, []);
 
   function goToNextQuestion() {
     setIntake((current) => ({
@@ -109,6 +114,7 @@ function IntakeProvider({ children }) {
     startIntake,
     returnToWelcome,
     saveAnswer,
+    savePatientSex,
     goToNextQuestion,
     goToPreviousQuestion,
     goToQuestion,
