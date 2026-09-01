@@ -1,7 +1,9 @@
 import os
+
 from dotenv import load_dotenv
 
 load_dotenv()
+
 
 def require(name: str) -> str:
     value = os.getenv(name)
@@ -14,6 +16,7 @@ class Settings:
     def __init__(self) -> None:
         self.port: int = int(os.getenv("PORT", "8000"))
         self.database_url: str = require("DATABASE_URL")
+        self.frontend_url: str = require("FRONTEND_URL")
 
 
 settings = Settings()

@@ -1,4 +1,6 @@
+from datetime import datetime
 from typing import Literal, get_args
+from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
@@ -271,3 +273,15 @@ class IntakeSubmission(IntakeModel):
             )
 
         return self
+
+
+class IntakeResponse(IntakeModel):
+    model_config = ConfigDict(from_attributes=True, extra="forbid")
+
+    id: UUID
+    answers: dict[str, object]
+    current_section: Literal["A", "B", "C", "D", "E"]
+    status: Literal["draft", "submitted"]
+    created_at: datetime
+    updated_at: datetime
+    submitted_at: datetime | None
