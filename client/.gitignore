@@ -1,29 +1,24 @@
-# Environment and secrets
-.env
-.env.*
-!.env.example
-.venv/
-venv/
-
-# Python
-__pycache__/
-*.py[cod]
-*.egg-info/
-.python-version
-
-# Tests and tooling
-.coverage
-htmlcov/
-.pytest_cache/
-.mypy_cache/
-.ruff_cache/
-
-# Runtime output
-logs/
+# Logs
+logs
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 
-# Editors and operating systems
-.vscode/
-.idea/
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
 .DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
 *.sw?

@@ -30,3 +30,11 @@ def get_db_session() -> Generator[Session, None, None]:
 def check_database_connection() -> None:
     with engine.connect() as connection:
         connection.execute(text("SELECT 1"))
+
+
+def enable_row_level_security() -> None:
+    with engine.begin() as connection:
+        connection.execute(text("ALTER TABLE intakes ENABLE ROW LEVEL SECURITY"))
+        connection.execute(
+            text("ALTER TABLE intake_forms ENABLE ROW LEVEL SECURITY")
+        )
