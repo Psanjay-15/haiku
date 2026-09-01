@@ -21,6 +21,46 @@ const ReviewHeader = styled.div`
     color: var(--color-muted);
     line-height: 1.6;
   }
+
+  @media print { display: none; }
+`;
+
+const ReviewToolbar = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+
+  @media print { display: none; }
+`;
+
+const PrintButton = styled.button`
+  min-height: 44px;
+  border: 1px solid var(--color-border);
+  border-radius: 11px;
+  padding: 0 14px;
+  background: #fff;
+  color: var(--color-success);
+  font: inherit;
+  font-size: .76rem;
+  font-weight: 750;
+  cursor: pointer;
+
+  &:hover { border-color: var(--color-success); background: #eef4f0; }
+`;
+
+const PrintHeading = styled.div`
+  display: none;
+
+  @media print {
+    display: block;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #17211d;
+
+    h1 { margin: 0 0 4px; font: 700 18pt Georgia, serif; }
+    p { margin: 0; color: #555; font-size: 9pt; }
+  }
 `;
 
 const SectionsGrid = styled.div`
@@ -30,6 +70,11 @@ const SectionsGrid = styled.div`
 
   @media (min-width: 900px) {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @media print {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
   }
 `;
 
@@ -47,6 +92,14 @@ const Section = styled.section`
     @media (min-width: 900px) {
       grid-column: 1 / -1;
     }
+  }
+
+  @media print {
+    break-inside: avoid;
+    border-color: #aaa;
+    box-shadow: none;
+
+    &:nth-child(5) { grid-column: 1 / -1; }
   }
 `;
 
@@ -87,6 +140,14 @@ const AnswerRow = styled.div`
     grid-template-columns: 1fr;
     gap: 6px;
   }
+
+  @media print {
+    grid-template-columns: minmax(120px, 1fr) minmax(100px, .85fr);
+    gap: 8px;
+    padding: 8px 10px;
+
+    strong, span { font-size: 8pt; }
+  }
 `;
 
 const EditButton = styled.button`
@@ -110,6 +171,8 @@ const EditButton = styled.button`
     outline: 3px solid rgb(52 116 91 / 16%);
     outline-offset: 2px;
   }
+
+  @media print { display: none; }
 `;
 
 const SubmitArea = styled.div`
@@ -133,6 +196,8 @@ const SubmitArea = styled.div`
     align-items: stretch;
     flex-direction: column;
   }
+
+  @media print { display: none; }
 `;
 
 const ErrorMessage = styled.p`
@@ -142,6 +207,7 @@ const ErrorMessage = styled.p`
 `;
 
 const BackButton = styled.button`
+  min-height: 44px;
   border: 0;
   padding: 0;
   background: transparent;
@@ -239,9 +305,18 @@ function ReviewPage({
 
   return (
     <div>
-      <BackButton type="button" onClick={onBack}>
-        ← Back to last question
-      </BackButton>
+      <ReviewToolbar>
+        <BackButton type="button" onClick={onBack}>
+          ← Back to last question
+        </BackButton>
+        <PrintButton type="button" onClick={() => window.print()}>
+          Print / Save as PDF
+        </PrintButton>
+      </ReviewToolbar>
+      <PrintHeading>
+        <h1>Hair &amp; Scalp Intake</h1>
+        <p>Confidential patient summary · Generated {new Intl.DateTimeFormat("en-IN", { dateStyle: "medium" }).format(new Date())}</p>
+      </PrintHeading>
       <ReviewHeader>
         <h1>Review your answers.</h1>
         <p>Make sure everything feels accurate before sending it to the clinic.</p>

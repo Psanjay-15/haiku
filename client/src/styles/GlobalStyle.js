@@ -55,6 +55,13 @@ const GlobalStyle = createGlobalStyle`
       transition-duration: 0.01ms !important;
     }
   }
+
+  @media print {
+    @page { size: A4; margin: 12mm; }
+
+    :root { background: #fff; }
+    body { background: #fff; color: #111; }
+  }
 `;
 
 export default GlobalStyle;
