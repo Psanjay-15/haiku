@@ -3,13 +3,17 @@ import styled from "styled-components";
 
 const TreatmentList = styled.div`
   display: grid;
-  gap: 12px;
+  gap: 10px;
+  @media (min-width: 760px) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 `;
 
 const TreatmentCard = styled.div`
   border: 1px solid var(--color-border);
   border-radius: 16px;
-  padding: 17px;
+  padding: 13px;
+  ${({ $open }) => $open && `
+    @media (min-width: 760px) { grid-column: 1 / -1; }
+  `}
   background: #fff;
 `;
 
@@ -119,7 +123,7 @@ function TreatmentInput({ question, value, onChange }) {
         const selected = rowValue[flagKey];
 
         return (
-          <TreatmentCard key={row.key}>
+          <TreatmentCard key={row.key} $open={selected === true}>
             <TreatmentHeader>
               <TreatmentName>{row.label}</TreatmentName>
               <Choices>

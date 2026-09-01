@@ -6,12 +6,12 @@ import PrimaryButton from "../reusable/PrimaryButton";
 
 
 const ReviewHeader = styled.div`
-  margin: 32px 0;
+  margin: 24px 0 20px;
 
   h1 {
     margin: 0 0 12px;
     font-family: Georgia, "Times New Roman", serif;
-    font-size: clamp(2.2rem, 4vw, 3.5rem);
+    font-size: clamp(2rem, 3.5vw, 3rem);
     font-weight: 500;
     letter-spacing: -0.04em;
   }
@@ -23,26 +23,48 @@ const ReviewHeader = styled.div`
   }
 `;
 
+const SectionsGrid = styled.div`
+  display: grid;
+  align-items: stretch;
+  gap: 14px;
+
+  @media (min-width: 900px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+`;
+
 const Section = styled.section`
-  margin-top: 18px;
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  margin: 0;
   border: 1px solid var(--color-border);
   border-radius: 18px;
   overflow: hidden;
   background: #fff;
+
+  &:nth-child(5) {
+    @media (min-width: 900px) {
+      grid-column: 1 / -1;
+    }
+  }
 `;
 
 const SectionTitle = styled.h2`
+  display: flex;
+  min-height: 45px;
+  align-items: center;
   margin: 0;
-  padding: 14px 18px;
+  padding: 12px 15px;
   background: #f2f4ef;
   font-size: 0.88rem;
 `;
 
 const AnswerRow = styled.div`
   display: grid;
-  grid-template-columns: minmax(160px, 0.8fr) 1.2fr auto;
-  gap: 18px;
-  padding: 15px 18px;
+  grid-template-columns: minmax(135px, 1fr) minmax(110px, .8fr) auto;
+  gap: 10px;
+  padding: 11px 14px;
   border-top: 1px solid #ebe9e4;
 
   &:first-of-type {
@@ -50,13 +72,13 @@ const AnswerRow = styled.div`
   }
 
   strong {
-    font-size: 0.8rem;
+    font-size: 0.74rem;
     line-height: 1.45;
   }
 
   span {
     color: var(--color-muted);
-    font-size: 0.8rem;
+    font-size: 0.74rem;
     line-height: 1.55;
     white-space: pre-line;
   }
@@ -71,7 +93,7 @@ const EditButton = styled.button`
   align-self: start;
   border: 1px solid var(--color-border);
   border-radius: 9px;
-  padding: 6px 10px;
+  padding: 5px 8px;
   background: #fafaf8;
   color: var(--color-success);
   font: inherit;
@@ -225,26 +247,28 @@ function ReviewPage({
         <p>Make sure everything feels accurate before sending it to the clinic.</p>
       </ReviewHeader>
 
-      {form.sections.map((section) => (
-        <Section key={section.id}>
-          <SectionTitle>
-            {section.id} · {section.title}
-          </SectionTitle>
-          {section.questions.map((question) => (
-            <AnswerRow key={question.key}>
-              <strong>{question.question}</strong>
-              <span>{formatAnswer(question, answers)}</span>
-              <EditButton
-                type="button"
-                aria-label={`Edit: ${question.question}`}
-                onClick={() => onEditQuestion(question.key)}
-              >
-                Edit
-              </EditButton>
-            </AnswerRow>
-          ))}
-        </Section>
-      ))}
+      <SectionsGrid>
+        {form.sections.map((section) => (
+          <Section key={section.id}>
+            <SectionTitle>
+              {section.id} · {section.title}
+            </SectionTitle>
+            {section.questions.map((question) => (
+              <AnswerRow key={question.key}>
+                <strong>{question.question}</strong>
+                <span>{formatAnswer(question, answers)}</span>
+                <EditButton
+                  type="button"
+                  aria-label={`Edit: ${question.question}`}
+                  onClick={() => onEditQuestion(question.key)}
+                >
+                  Edit
+                </EditButton>
+              </AnswerRow>
+            ))}
+          </Section>
+        ))}
+      </SectionsGrid>
 
       <SubmitArea>
         <p>Submitting sends the completed intake securely to the clinic.</p>
