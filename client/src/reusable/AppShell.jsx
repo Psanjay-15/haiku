@@ -11,12 +11,21 @@ const Shell = styled.main`
     width: min(100% - 72px, 1240px);
     padding-top: 32px;
   }
+
+  @media print {
+    width: 100%;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+  }
 `;
 
 const Header = styled.header`
   display: flex;
   align-items: center;
   justify-content: space-between;
+
+  @media print { display: none; }
 `;
 
 const Brand = styled.div`
@@ -68,6 +77,8 @@ const Content = styled.div`
   @media (min-width: 768px) {
     margin-top: 64px;
   }
+
+  @media print { margin-top: 0; }
 `;
 
 

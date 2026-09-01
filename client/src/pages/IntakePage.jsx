@@ -26,6 +26,10 @@ const Workspace = styled.section`
     justify-content: center;
     gap: 44px;
   }
+
+  @media print {
+    display: block;
+  }
 `;
 
 const Sidebar = styled.aside`
@@ -38,6 +42,8 @@ const Sidebar = styled.aside`
   @media (max-width: 899px) {
     padding: 16px;
   }
+
+  @media print { display: none; }
 `;
 
 const ProgressTop = styled.div`
@@ -108,14 +114,22 @@ const QuestionCard = styled.div`
   padding: ${({ $compact }) => $compact ? "clamp(22px, 3vw, 36px)" : "clamp(24px, 5vw, 48px)"};
   background: var(--color-surface);
   box-shadow: 0 24px 70px rgb(38 45 41 / 9%);
+
+  @media print {
+    border: 0;
+    border-radius: 0;
+    padding: 0;
+    box-shadow: none;
+  }
 `;
 
 const BackButton = styled.button`
   display: inline-flex;
+  min-height: 44px;
   align-items: center;
   gap: 7px;
   border: 0;
-  padding: 0;
+  padding: 0 4px;
   background: transparent;
   color: var(--color-muted);
   font: inherit;

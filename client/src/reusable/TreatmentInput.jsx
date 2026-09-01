@@ -40,7 +40,7 @@ const Choices = styled.div`
 `;
 
 const Choice = styled.button`
-  min-height: 37px;
+  min-height: 44px;
   border: 1px solid
     ${({ $selected }) => ($selected ? "var(--color-success)" : "var(--color-border)")};
   border-radius: 10px;
