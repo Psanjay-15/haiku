@@ -7,6 +7,7 @@ import HabitsInput from "../reusable/HabitsInput";
 import PrimaryButton from "../reusable/PrimaryButton";
 import QuestionInput from "../reusable/QuestionInput";
 import SectionAInput from "../reusable/SectionAInput";
+import SectionBInput from "../reusable/SectionBInput";
 import TreatmentInput from "../reusable/TreatmentInput";
 import YesNoDetailInput from "../reusable/YesNoDetailInput";
 import ReviewPage from "./ReviewPage";
@@ -267,8 +268,14 @@ function IntakePage() {
   );
   const question = questions[currentQuestion];
   const sectionA = form.sections[0];
+  const sectionB = form.sections[1];
   const sectionAQuestions = questions.filter((item) => item.section_id === "A");
+  const sectionBQuestions = questions.filter((item) => item.section_id === "B");
   const isSectionAPage = currentQuestion < sectionAQuestions.length;
+  const sectionBStart = sectionAQuestions.length;
+  const sectionBEnd = sectionBStart + sectionBQuestions.length;
+  const isSectionBPage = currentQuestion >= sectionBStart && currentQuestion < sectionBEnd;
+  const isGroupedPage = isSectionAPage || isSectionBPage;
   const reviewMode = !question;
   const completedQuestions = Math.min(currentQuestion, questions.length);
   const progress = Math.max(2, (completedQuestions / questions.length) * 100);
@@ -282,7 +289,7 @@ function IntakePage() {
       return;
     }
 
-    if (currentQuestion === sectionAQuestions.length) {
+    if (isSectionBPage) {
       goToQuestion(0);
       return;
     }
@@ -297,6 +304,16 @@ function IntakePage() {
         goToQuestion(questions.length);
       } else {
         goToQuestion(sectionAQuestions.length);
+      }
+      return;
+    }
+
+    if (isSectionBPage) {
+      if (editingQuestionIndex !== null) {
+        setEditingQuestionIndex(null);
+        goToQuestion(questions.length);
+      } else {
+        goToQuestion(sectionBEnd);
       }
       return;
     }
@@ -320,7 +337,13 @@ function IntakePage() {
     );
 
     setEditingQuestionIndex(questionIndex);
-    goToQuestion(questionIndex < sectionAQuestions.length ? 0 : questionIndex);
+    if (questionIndex < sectionAQuestions.length) {
+      goToQuestion(0);
+    } else if (questionIndex < sectionBEnd) {
+      goToQuestion(sectionBStart);
+    } else {
+      goToQuestion(questionIndex);
+    }
   }
 
   function handleReviewBack() {
@@ -375,11 +398,14 @@ function IntakePage() {
     sectionAQuestions.every((item) =>
       isAnswerComplete(item, answers[item.key], answers),
     );
+  const isSectionBComplete = sectionBQuestions.every((item) =>
+    isAnswerComplete(item, answers[item.key], answers),
+  );
 
   return (
     <AppShell>
-      <Workspace $sectionA={isSectionAPage}>
-        <Sidebar $hidden={isSectionAPage}>
+      <Workspace $sectionA={isGroupedPage}>
+        <Sidebar $hidden={isGroupedPage}>
           <ProgressTop>
             <span>Your progress</span>
             <span>{completedQuestions} of {questions.length}</span>
@@ -399,7 +425,7 @@ function IntakePage() {
           </SectionList>
         </Sidebar>
 
-        <QuestionCard $compact={isSectionAPage} aria-live="polite">
+        <QuestionCard $compact={isGroupedPage} aria-live="polite">
           {!reviewMode && (
             <BackButton type="button" onClick={handleBack}>
               <span aria-hidden="true">←</span> Back
@@ -424,6 +450,13 @@ function IntakePage() {
                   onAnswer={saveAnswer}
                   onSexChange={savePatientSex}
                 />
+              ) : isSectionBPage ? (
+                <SectionBInput
+                  section={sectionB}
+                  answers={answers}
+                  patientSex={patientSex}
+                  onAnswer={saveAnswer}
+                />
               ) : (
                 <>
                   <QuestionNumber>
@@ -442,11 +475,17 @@ function IntakePage() {
                   disabled={
                     isSectionAPage
                       ? !isSectionAComplete
-                      : !isAnswerComplete(question, answers[question.key], answers)
+                      : isSectionBPage
+                        ? !isSectionBComplete
+                        : !isAnswerComplete(question, answers[question.key], answers)
                   }
                   onClick={handleContinue}
                 >
-                  {isSectionAPage ? "Continue to health" : "Continue"} <span aria-hidden="true">→</span>
+                  {isSectionAPage
+                    ? "Continue to health"
+                    : isSectionBPage
+                      ? "Continue to lifestyle"
+                      : "Continue"} <span aria-hidden="true">→</span>
                 </PrimaryButton>
               </Actions>
             </>
