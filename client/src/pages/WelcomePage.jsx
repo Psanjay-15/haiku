@@ -3,7 +3,6 @@ import styled from "styled-components";
 import AppShell from "../reusable/AppShell";
 import PrimaryButton from "../reusable/PrimaryButton";
 
-
 const Hero = styled.section`
   display: grid;
   align-items: center;
@@ -196,7 +195,6 @@ const StepCopy = styled.div`
   }
 `;
 
-
 function WelcomePage({ form, onStart, submissionComplete }) {
   const questionCount = form.sections.reduce(
     (total, section) => total + section.questions.length,
@@ -223,9 +221,9 @@ function WelcomePage({ form, onStart, submissionComplete }) {
           </Introduction>
 
           <Details aria-label="Form details">
-            <Detail>{questionCount} simple questions</Detail>
+            {/* <Detail>{questionCount} simple questions</Detail>
             <Detail>Tap-first answers</Detail>
-            <Detail>Progress saved automatically</Detail>
+            <Detail>Progress saved automatically</Detail> */}
           </Details>
 
           <ActionRow>
@@ -239,7 +237,7 @@ function WelcomePage({ form, onStart, submissionComplete }) {
         </div>
 
         <JourneyCard>
-          <CardTop>
+          {/* <CardTop>
             <div>
               <CardKicker>Time to complete</CardKicker>
               <Time>5</Time> <TimeUnit>minutes</TimeUnit>
@@ -247,8 +245,10 @@ function WelcomePage({ form, onStart, submissionComplete }) {
             <TimeUnit>
               {questionCount} questions · {form.sections.length} sections
             </TimeUnit>
-          </CardTop>
-          <JourneyTitle>A calmer clinic visit starts before you arrive.</JourneyTitle>
+          </CardTop> */}
+          <JourneyTitle>
+            A calmer clinic visit starts before you arrive.
+          </JourneyTitle>
           <JourneyList>
             <JourneyItem>
               <StepNumber>01</StepNumber>
