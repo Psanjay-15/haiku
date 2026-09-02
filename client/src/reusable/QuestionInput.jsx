@@ -1,6 +1,5 @@
 import styled from "styled-components";
 
-
 const NumberField = styled.label`
   display: flex;
   max-width: 330px;
@@ -11,7 +10,9 @@ const NumberField = styled.label`
   border-radius: 16px;
   padding: 0 18px;
   background: #fff;
-  transition: border 150ms ease, box-shadow 150ms ease;
+  transition:
+    border 150ms ease,
+    box-shadow 150ms ease;
 
   &:focus-within {
     border-color: var(--color-accent);
@@ -42,7 +43,10 @@ const OptionGrid = styled.div`
   gap: 10px;
 
   @media (min-width: 640px) {
-    grid-template-columns: repeat(${({ $pattern }) => $pattern ? 3 : 2}, minmax(0, 1fr));
+    grid-template-columns: repeat(
+      ${({ $pattern }) => ($pattern ? 3 : 2)},
+      minmax(0, 1fr)
+    );
   }
 `;
 
@@ -52,7 +56,8 @@ const Option = styled.button`
   align-items: center;
   gap: 12px;
   border: 1.5px solid
-    ${({ $selected }) => ($selected ? "var(--color-success)" : "var(--color-border)")};
+    ${({ $selected }) =>
+      $selected ? "var(--color-success)" : "var(--color-border)"};
   border-radius: 15px;
   padding: 13px 15px;
   background: ${({ $selected }) => ($selected ? "#eef4f0" : "#fff")};
@@ -62,7 +67,10 @@ const Option = styled.button`
   font-size: 0.9rem;
   font-weight: 650;
   cursor: pointer;
-  transition: border 150ms ease, background 150ms ease, transform 150ms ease;
+  transition:
+    border 150ms ease,
+    background 150ms ease,
+    transform 150ms ease;
 
   &::before {
     display: grid;
@@ -73,7 +81,8 @@ const Option = styled.button`
     border: 1.5px solid
       ${({ $selected }) => ($selected ? "var(--color-success)" : "#c6cac5")};
     border-radius: ${({ $multi }) => ($multi ? "6px" : "50%")};
-    background: ${({ $selected }) => ($selected ? "var(--color-success)" : "#fff")};
+    background: ${({ $selected }) =>
+      $selected ? "var(--color-success)" : "#fff"};
     color: white;
     content: ${({ $selected }) => ($selected ? '"✓"' : '""')};
     font-size: 0.72rem;
@@ -81,7 +90,8 @@ const Option = styled.button`
   }
 
   &:hover {
-    border-color: ${({ $selected }) => ($selected ? "var(--color-success)" : "#adb4ae")};
+    border-color: ${({ $selected }) =>
+      $selected ? "var(--color-success)" : "#adb4ae"};
     transform: translateY(-1px);
   }
 
@@ -93,7 +103,7 @@ const Option = styled.button`
 
 const PatternOption = styled(Option)`
   position: relative;
-  min-height: 154px;
+  min-height: 0;
   flex-direction: column;
   align-items: stretch;
   gap: 0;
@@ -103,23 +113,28 @@ const PatternOption = styled(Option)`
   &::before {
     position: absolute;
     z-index: 1;
-    top: 12px;
-    right: 12px;
+    top: 10px;
+    right: 10px;
   }
 `;
 
 const PatternImage = styled.img`
+  display: block;
+  box-sizing: border-box;
   width: 100%;
-  height: 94px;
+  height: auto;
   object-fit: contain;
-  padding: 7px 26px 0;
-  background: #f3eee7;
+  object-position: center;
+  padding: 8px 10px 6px;
+  background: #fff;
+  border-bottom: 1px solid
+    ${({ $selected }) => ($selected ? "rgb(52 116 91 / 18%)" : "#ece8e2")};
 `;
 
 const PatternCopy = styled.span`
   display: grid;
   gap: 4px;
-  padding: 9px 38px 11px 12px;
+  padding: 10px 14px 12px;
 
   strong {
     font-size: 0.8rem;
@@ -166,14 +181,31 @@ const OtherField = styled.label`
 const OTHER_PREFIX = "Other: ";
 
 const PATTERN_DETAILS = {
-  "Receding hairline": ["Moving back around the temples", "/intake-assets/receding-hairline.svg"],
-  "Thinning at crown": ["More scalp visible near the crown", "/intake-assets/thinning-crown.svg"],
-  "Widening part line": ["The centre or side part looks wider", "/intake-assets/widening-part.svg"],
-  "Diffuse thinning": ["Less density across most of the scalp", "/intake-assets/diffuse-thinning.svg"],
-  "Patchy loss": ["One or more defined bare patches", "/intake-assets/patchy-loss.svg"],
-  "Sudden excessive shedding": ["Much more hair falling than usual", "/intake-assets/excessive-shedding.svg"],
+  "Receding hairline": [
+    "Moving back around the temples",
+    "/intake-assets/receding-hairline.png",
+  ],
+  "Thinning at crown": [
+    "More scalp visible near the crown",
+    "/intake-assets/thinning-crown.png",
+  ],
+  "Widening part line": [
+    "The centre or side part looks wider",
+    "/intake-assets/widening-part.png",
+  ],
+  "Diffuse thinning": [
+    "Less density across most of the scalp",
+    "/intake-assets/diffuse-thinning.png",
+  ],
+  "Patchy loss": [
+    "One or more defined bare patches",
+    "/intake-assets/patchy-loss.png",
+  ],
+  "Sudden excessive shedding": [
+    "Much more hair falling than usual",
+    "/intake-assets/excessive-shedding.png",
+  ],
 };
-
 
 function QuestionInput({ question, value, onChange }) {
   if (question.type === "number") {
@@ -198,14 +230,16 @@ function QuestionInput({ question, value, onChange }) {
     );
   }
 
-  const isMulti = question.type === "multi" || question.type === "multi_optional";
+  const isMulti =
+    question.type === "multi" || question.type === "multi_optional";
   const isPatternQuestion = question.key === "pattern";
   const options = question.options.map((option) => {
-    const normalized = typeof option === "string" ? { label: option, value: option } : option;
+    const normalized =
+      typeof option === "string" ? { label: option, value: option } : option;
     const fallback = PATTERN_DETAILS[normalized.value];
 
     return fallback
-      ? { description: fallback[0], image: fallback[1], ...normalized }
+      ? { ...normalized, description: fallback[0], image: fallback[1] }
       : normalized;
   });
   const selectedValues = isMulti
@@ -213,8 +247,8 @@ function QuestionInput({ question, value, onChange }) {
     : value === undefined
       ? []
       : [value];
-  const otherAnswer = selectedValues.find((answer) =>
-    typeof answer === "string" && answer.startsWith(OTHER_PREFIX),
+  const otherAnswer = selectedValues.find(
+    (answer) => typeof answer === "string" && answer.startsWith(OTHER_PREFIX),
   );
   const isOtherSelected = Boolean(otherAnswer);
 
@@ -243,7 +277,8 @@ function QuestionInput({ question, value, onChange }) {
   function toggleOther() {
     const withoutExclusiveAndOther = selectedValues.filter(
       (answer) =>
-        answer !== question.exclusive_option && !answer.startsWith(OTHER_PREFIX),
+        answer !== question.exclusive_option &&
+        !answer.startsWith(OTHER_PREFIX),
     );
 
     onChange(
@@ -268,24 +303,31 @@ function QuestionInput({ question, value, onChange }) {
           const OptionComponent = isPatternQuestion ? PatternOption : Option;
 
           return (
-          <OptionComponent
-            key={String(option.value)}
-            type="button"
-            $selected={selectedValues.includes(option.value)}
-            $multi={isMulti}
-            aria-pressed={selectedValues.includes(option.value)}
-            onClick={() => selectOption(option.value)}
-          >
-            {isPatternQuestion ? (
-              <>
-                <PatternImage src={option.image} alt="" aria-hidden="true" />
-                <PatternCopy>
-                  <strong>{option.label}</strong>
-                  <small>{option.description}</small>
-                </PatternCopy>
-              </>
-            ) : option.label}
-          </OptionComponent>
+            <OptionComponent
+              key={String(option.value)}
+              type="button"
+              $selected={selectedValues.includes(option.value)}
+              $multi={isMulti}
+              aria-pressed={selectedValues.includes(option.value)}
+              onClick={() => selectOption(option.value)}
+            >
+              {isPatternQuestion ? (
+                <>
+                  <PatternImage
+                    src={option.image}
+                    alt=""
+                    aria-hidden="true"
+                    $selected={selectedValues.includes(option.value)}
+                  />
+                  <PatternCopy>
+                    <strong>{option.label}</strong>
+                    <small>{option.description}</small>
+                  </PatternCopy>
+                </>
+              ) : (
+                option.label
+              )}
+            </OptionComponent>
           );
         })}
         {question.allow_other && (
